@@ -2,7 +2,7 @@ import numpy as np
 
 
 class AntColony(object):
-    def __init__(self, distances, n_ants, n_best, n_iterations, decay, alpha=1, beta=1):
+    def __init__(self, distances, n_ants, n_best, n_iterations, roh, alpha=1, beta=1):
         """
         Initialize the AntColony with the given parameters.
 
@@ -11,18 +11,18 @@ class AntColony(object):
             n_ants (int): Number of ants running per iteration.
             n_best (int): Number of best ants who deposit pheromone.
             n_iterations (int): Number of iterations.
-            decay (float): Rate at which pheromone decays. The pheromone value is multiplied by decay,
+            roh (float): Rate at which pheromone decays. The pheromone value is multiplied by roh,
                            so 0.95 will lead to slower decay, 0.5 to much faster decay.
             alpha (int or float, optional): Exponent on pheromone, higher alpha gives pheromone more weight. Default=1.
             beta (int or float, optional): Exponent on distance, higher beta gives distance more weight. Default=1.
         """
         self.distances = distances
-        self.pheromone = np.ones(self.distances.shape) / len(distances)
+        self.tao = np.ones(self.distances.shape) / len(distances)
         self.all_inds = range(len(distances))
         self.n_ants = n_ants
         self.n_best = n_best
         self.n_iterations = n_iterations
-        self.decay = decay
+        self.roh = roh
         self.alpha = alpha
         self.beta = beta
 
@@ -43,7 +43,7 @@ class AntColony(object):
             print(shortest_path)
             if shortest_path[1] < all_time_shortest_path[1]:
                 all_time_shortest_path = shortest_path
-            self.pheromone *= self.decay
+            self.tao *= self.roh
         return all_time_shortest_path
 
     def spread_pheromone(self, all_paths, n_best, shortest_path):
@@ -58,7 +58,7 @@ class AntColony(object):
         sorted_paths = sorted(all_paths, key=lambda x: x[1])
         for path, dist in sorted_paths[:n_best]:
             for move in path:
-                self.pheromone[move] += 1.0 / self.distances[move]
+                self.tao[move] += 1.0 / self.distances[move]
 
     def gen_path_dist(self, path):
         """
@@ -102,7 +102,7 @@ class AntColony(object):
         prev = start
         for i in range(len(self.distances) - 1):
             move = self.pick_move(
-                self.pheromone[prev], self.distances[prev], visited)
+                self.tao[prev], self.distances[prev], visited)
             path.append((prev, move))
             prev = move
             visited.add(move)

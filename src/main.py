@@ -20,9 +20,9 @@ N_BEST = 1
 # Number of iterations the ant colony algorithm will run.
 N_ITERATIONS = 500
 
-# Rate at which pheromone decays. The pheromone value is multiplied by DECAY,
+# Rate at which pheromone decays. The pheromone value is multiplied by ROH,
 # leading to slower decay for higher values and faster decay for lower values.
-DECAY = 0.95
+ROH = 0.95
 
 # Exponent on pheromone, giving pheromone more weight.
 ALPHA = 1
@@ -32,7 +32,7 @@ BETA = 1
 
 if __name__ == "__main__":
     ant_colony = AntColony(DISTANCES, n_ants=N_ANTS, n_best=N_BEST,
-                           n_iterations=N_ITERATIONS, decay=DECAY, alpha=ALPHA, beta=BETA)
+                           n_iterations=N_ITERATIONS, roh=ROH, alpha=ALPHA, beta=BETA)
     shortest_path = ant_colony.run()
 
     print("\n")
